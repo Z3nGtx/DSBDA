@@ -1,0 +1,40 @@
+# Required Libraries Import Karna
+import requests  # Web se data fetch karne ke liye
+from bs4 import BeautifulSoup  # HTML ko parse karne ke liye
+import json  # JSON format ko handle karne ke liye
+
+# Step 1: Website URL ko request bhejna
+url = 'https://www.meesho.com/stylish-casual-block-heels-for-women/p/5y67ap'
+response = requests.get(url)  # Request bhejte hain aur response lete hain
+soup = BeautifulSoup(response.content, 'html.parser')  # Response ko HTML parse karte hain
+
+# Step 2: <script> tags ko find karna jo JSON data contain karte hain
+scripts = soup.find_all('script', type='application/ld+json')  # LD+JSON format mein script tags dhund rahe hain
+
+# Step 3: Har script tag ko loop karna aur review data ko extract karna
+for script in scripts:
+    try:
+        # JSON data ko parse karte hain
+        data = json.loads(script.string)
+
+        # Agar review data hai to usse process karna
+        if "review" in data:
+            for review in data["review"]:  # Har review ko loop karte hain
+                # Review details ko extract karna aur print karna
+                print(f"👤 Customer Name: {review['author']['name']}")  # Customer ka naam print karna
+                print(f"⭐ Rating: {review['reviewRating']['ratingValue']}")  # Rating print karna
+                print(f"💬 Review: {review['reviewBody']}")  # Review body print karna
+                print("🏷️ Tag: Not available in static HTML")  # Tag ka data static HTML mein nahi milta
+                print("-" * 60)  # Review ke beech mein separation line print karna
+    except Exception as e:
+        # Agar koi error aaye to usse ignore karke next script pe move karna
+        continue
+
+# Find the overall rating tag
+rating_tag = soup.find('h1', {'class': 'sc-eDvSVe cdZTwf'})
+
+# Check if rating_tag was found before calling get_text()
+if rating_tag:
+    print("Overall Rating : ",rating_tag.get_text())
+else:
+    print("Overall Rating not found on the page.") # Message if the rating tag is not found
