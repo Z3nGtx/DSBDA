@@ -1,0 +1,97 @@
+import pandas as pd
+import numpy as np
+
+fb_data = pd.read_csv("dataset_Facebook.csv",sep=";")
+
+fb_data.head(10)
+
+fb_data.info()
+
+fb_data.isnull().sum()
+
+fb_data.dtypes
+
+fb_data.describe()
+
+updated_df = fb_data.dropna(axis=0)
+updated_df.isnull().sum()
+
+# Subset by Column Value: Select rows based on values in a specific column. For instance, to get data for a specific month:
+df_month_3 = fb_data[fb_data['Post Month'] == 3]
+
+# Subset by Multiple Conditions: Use logical operators (& for "and," | for "or") to combine conditions.
+df_paid_week_1 = fb_data[(fb_data['Paid'] == 1) & (fb_data['Post Weekday'] == 1)]
+
+# Select Specific Columns: Create a subset with only certain columns.
+df_selected_columns = fb_data[['Page total likes', 'Post Month', 'Post Weekday', 'Post Hour', 'Paid', 'like', 'share', 'comment']]
+
+df_month_3.shape
+
+df_paid_week_1.head(5)
+
+df_selected_columns.head(5)
+
+df_1 = fb_data[['Category','Type','Paid']].loc[:10]
+
+df_1
+
+df_2 = fb_data[["Type","Total Interactions"]].loc[:10]
+
+df_2
+
+# Define a dictionary containing employee data 
+data1 = {'key': ['K0', 'K1', 'K2', 'K3'],
+         'key1': ['K0', 'K1', 'K0', 'K1'],
+         'Name':['Jai', 'Princi', 'Gaurav', 'Anuj'], 
+        'Age':[27, 24, 22, 32],} 
+   
+# Define a dictionary containing employee data 
+data2 = {'key': ['K0', 'K1', 'K2', 'K3'],
+         'key1': ['K0', 'K0', 'K0', 'K0'],
+         'Address':['Nagpur', 'Kanpur', 'Allahabad', 'Kannuaj'], 
+        'Qualification':['Btech', 'B.A', 'Bcom', 'B.hons']} 
+ 
+# Convert the dictionary into DataFrame  
+df = pd.DataFrame(data1)
+ 
+# Convert the dictionary into DataFrame  
+df1 = pd.DataFrame(data2) 
+  
+ 
+print(df, "\n\n", df1) 
+
+# using keys from right frame
+res = pd.merge(df, df1, how="right", on=['key', 'key1'])
+ 
+res
+
+# using keys from left frame
+res = pd.merge(df, df1, how='left', on=['key', 'key1'])
+ 
+res
+
+res = pd.merge(df, df1, how='inner', on=['key', 'key1'])
+ 
+res
+
+merged_df = pd.merge(df_1, df_2, on=['Type'])
+
+merged_df
+
+merged_df.sort_values(by='Total Interactions', ascending=True)
+
+merged_df.T # or merged_df.transpose()
+
+#The stack() method works with the MultiIndex objects in DataFrame, it returns a DataFrame with an index with a new inner-most level of row labels. It changes the wide table to a long table.
+df_stacked = df.stack()
+
+# The unstack() is similar to stack method, It also works with multi-index objects in dataframe, producing a reshaped DataFrame with a new inner-most level of column labels.
+df_unstacked = df.unstack()
+
+df_unstacked
+
+# The melt() in Pandas reshape dataframe from wide format to long format. It uses the “id_vars[‘col_names’]” to melt the dataframe by column names.
+df_melt = df.melt()
+df_melt
+
+df_1.stack()
