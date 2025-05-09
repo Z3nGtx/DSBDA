@@ -1,0 +1,82 @@
+import pandas as pd
+import numpy as np
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report, accuracy_score
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+# Replace with your actual file names/paths
+air_df = pd.read_csv("/content/AirQuality.csv")
+heart_df = pd.read_csv("/content/heart_disease_uci(1).csv")
+
+print("Air Quality Data:")
+print(air_df.head())
+
+print("\nHeart Disease Data:")
+print(heart_df.head())
+
+
+# Replace with your actual file names/paths
+# Read Air Quality CSV with semicolon delimiter
+air_df = pd.read_csv("/content/AirQuality.csv", sep=';')
+# Read Heart Disease CSV (assuming comma delimiter is correct)
+heart_df = pd.read_csv("/content/heart_disease_uci(1).csv")
+
+print("Air Quality Data:")
+print(air_df.head())
+
+print("\nHeart Disease Data:")
+print(heart_df.head())
+
+# Add a prefix to avoid column name conflicts
+# Assign the original dataframes to the new variables before adding prefixes
+air_df_clean = air_df
+heart_df_clean = heart_df
+
+air_df_clean = air_df_clean.add_prefix("air_")
+heart_df_clean = heart_df_clean.add_prefix("heart_")
+
+# Combine datasets horizontally (side-by-side)
+combined_df = pd.concat([air_df_clean, heart_df_clean], axis=1)
+
+print("\nIntegrated Dataset:")
+print(combined_df.head())
+
+# Scale numerical features
+scaler = StandardScaler()
+scaled_columns = combined_df.select_dtypes(include=[np.number]).columns
+combined_df[scaled_columns] = scaler.fit_transform(combined_df[scaled_columns])
+
+print("\nTransformed (Standardized) Data:")
+print(combined_df.head())
+
+
+# Check for outliers or incorrect values (example: negative values where not expected)
+print("\nChecking for invalid values in heart_chol column:")
+print(combined_df[combined_df['heart_chol'] < 0])  # Example condition
+
+# Example fix: Replace negatives with column mean
+if (combined_df['heart_chol'] < 0).any():
+    mean_val = combined_df['heart_chol'][combined_df['heart_chol'] >= 0].mean()
+    combined_df.loc[combined_df['heart_chol'] < 0, 'heart_chol'] = mean_val
+
+
+# Add a prefix to avoid column name conflicts
+# Assign the original dataframes to the new variables before adding prefixes
+# Use .copy() to create actual copies of the dataframes
+air_df_clean = air_df.copy()
+heart_df_clean = heart_df.copy()
+
+# Add prefixes to the copies
+air_df_clean = air_df_clean.add_prefix("air_")
+heart_df_clean = heart_df_clean.add_prefix("heart_")
+
+# Combine datasets horizontally (side-by-side)
+combined_df = pd.concat([air_df_clean, heart_df_clean], axis=1)
+
+print("\nIntegrated Dataset:")
+print(combined_df.head())
